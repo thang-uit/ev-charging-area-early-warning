@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f6f2" />
+    <meta name="description" content="Dashboard minh họa cảnh báo sớm khu vực sạc xe điện gần đầy bằng mạng LSTM." />
+    <title>EV Area Early Warning</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Literata:opsz,wght@7..72,500;7..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <script>
+      try {
+        const savedTheme = localStorage.getItem('ev-warning-theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.dataset.theme = savedTheme;
+      } catch (_) {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Bỏ qua tới nội dung chính</a>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="EV Area Early Warning">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>EV / WATCH</strong><small>charging area early warning</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <a href="#dashboard" data-i18n="nav.dashboard">Bảng điều khiển</a>
+        <a href="#method" data-i18n="nav.method">Phương pháp</a>
+        <a href="#dataset" data-i18n="nav.dataset">Dữ liệu</a>
+        <a href="#references" data-i18n="nav.references">Nguồn</a>
+      </nav>
+      <div class="header-actions">
+        <div class="segmented" role="group" aria-label="Ngôn ngữ">
+          <button class="segment is-active" type="button" data-language="vi">VI</button>
+          <button class="segment" type="button" data-language="en">EN</button>
+        </div>
+        <button class="icon-button" id="themeToggle" type="button" aria-label="Đổi giao diện sáng tối" title="Đổi giao diện">
+          <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"/></svg>
+        </button>
+        <a class="github-link" href="https://github.com/thang-uit/ev-charging-area-early-warning" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+      <button class="menu-button" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Mở menu">☰</button>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav" hidden>
+      <a href="#dashboard" data-i18n="nav.dashboard">Bảng điều khiển</a>
+      <a href="#method" data-i18n="nav.method">Phương pháp</a>
+      <a href="#dataset" data-i18n="nav.dataset">Dữ liệu</a>
+      <a href="#references" data-i18n="nav.references">Nguồn</a>
+    </div>
+
+    <main id="main">
+      <section class="hero section-shell" id="top">
+        <div class="hero-copy reveal">
+          <p class="eyebrow" data-i18n="hero.eyebrow">DỰ ÁN HỌC SÂU / URBAN EV</p>
+          <h1 data-i18n="hero.title">Nhìn thấy giờ cao điểm trước khi nó xảy ra.</h1>
+          <p class="hero-lead" data-i18n="hero.lead">Một mô hình LSTM đọc lịch sử 24 giờ để cảnh báo khu vực sạc có nguy cơ đạt 80% công suất trong giờ kế tiếp.</p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#dashboard" data-i18n="hero.cta">Mở bản demo <span>→</span></a>
+            <a class="text-link" href="#method" data-i18n="hero.secondary">Xem cách mô hình hoạt động</a>
+          </div>
+          <div class="hero-meta"><span><i class="status-dot"></i><span data-i18n="hero.status">Bản chạy thử đã hoàn tất</span></span><span>01/09/2022 — 28/02/2023</span></div>
+        </div>
+        <div class="hero-visual reveal delay-1" aria-label="Minh họa khu vực sạc và cảnh báo">
+          <div class="visual-header"><span>LIVE / SIMULATION</span><span>24H WINDOW</span></div>
+          <div class="charging-scene">
+            <div class="scene-grid"></div>
+            <div class="scene-lines"><span></span><span></span><span></span></div>
+            <div class="charging-hub"><div class="hub-core"></div><div class="hub-ring"></div><div class="hub-ring ring-2"></div></div>
+            <div class="station station-a"><span class="plug"></span><b>1029</b><small>86%</small></div>
+            <div class="station station-b"><span class="plug"></span><b>890</b><small>92%</small></div>
+            <div class="station station-c"><span class="plug"></span><b>651</b><small>77%</small></div>
+            <div class="signal signal-a">+0.24</div><div class="signal signal-b">+0.11</div>
+          </div>
+          <div class="visual-footer"><span>MODEL OUTPUT</span><strong>0.87 <em>HIGH RISK</em></strong></div>
+        </div>
+      </section>
+
+      <section class="section-shell dashboard-section" id="dashboard">
+        <div class="section-heading reveal"><div><p class="eyebrow" data-i18n="dashboard.eyebrow">BẢNG ĐIỀU KHIỂN</p><h2 data-i18n="dashboard.title">Một dự đoán, đủ để hành động sớm.</h2></div><p data-i18n="dashboard.description">Chọn một khu vực trong tập kiểm tra và xem mô hình đánh giá giờ kế tiếp như thế nào.</p></div>
+        <div class="dashboard-grid">
+          <section class="control-panel panel reveal">
+            <div class="panel-top"><span class="panel-kicker">01 / INPUT</span><span class="live-pill"><i></i> TEST SET</span></div>
+            <label for="zoneSelect" data-i18n="dashboard.zoneLabel">Khu vực</label>
+            <select id="zoneSelect"></select>
+            <label for="timeSelect" data-i18n="dashboard.timeLabel">Mốc quan sát</label>
+            <select id="timeSelect"></select>
+            <div class="input-note" data-i18n="dashboard.inputNote">Mô hình nhìn lại 24 giờ trước mốc này và dự đoán giờ kế tiếp.</div>
+            <div class="mini-stats"><div><span data-i18n="dashboard.current">Tỷ lệ hiện tại</span><strong id="currentRate">--</strong></div><div><span data-i18n="dashboard.next">Giờ kế tiếp</span><strong id="targetRate">--</strong></div></div>
+          </section>
+          <section class="prediction-panel panel reveal delay-1">
+            <div class="panel-top"><span class="panel-kicker">02 / OUTPUT</span><span id="riskLabel" class="risk-label">--</span></div>
+            <div class="prediction-row"><div><span class="prediction-label" data-i18n="dashboard.probability">Xác suất gần đầy</span><strong id="probability">--</strong></div><div class="probability-ring" id="probabilityRing"><span id="probabilityRingText">--</span></div></div>
+            <div class="meter"><span id="probabilityMeter"></span></div>
+            <p id="predictionMessage" class="prediction-message">--</p>
+            <div class="prediction-footer"><span data-i18n="dashboard.threshold">Ngưỡng cảnh báo</span><b>80%</b><span class="separator"></span><span data-i18n="dashboard.model">Mô hình</span><b>LSTM</b></div>
+          </section>
+          <section class="trend-panel panel reveal delay-2">
+            <div class="panel-top"><span class="panel-kicker">03 / CONTEXT</span><span data-i18n="dashboard.trendLabel">Các điểm trong tập test</span></div>
+            <div class="trend-chart" id="trendChart" role="img" aria-label="Đường xác suất dự đoán theo thời gian"></div>
+            <div class="chart-legend"><span><i class="legend-probability"></i><span data-i18n="dashboard.probabilityLine">Xác suất LSTM</span></span><span><i class="legend-threshold"></i><span data-i18n="dashboard.thresholdLine">Ngưỡng 80%</span></span></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="section-shell method-section" id="method">
+        <div class="section-heading reveal"><div><p class="eyebrow" data-i18n="method.eyebrow">CƠ CHẾ MÔ HÌNH</p><h2 data-i18n="method.title">Từ lịch sử vận hành đến một cảnh báo có thể đọc được.</h2></div><p data-i18n="method.description">Không chỉ trả về đúng hoặc sai. Mô hình trả về một xác suất để người vận hành cân nhắc mức độ ưu tiên.</p></div>
+        <div class="method-flow">
+          <article class="flow-card reveal"><span class="flow-number">01</span><h3 data-i18n="method.step1.title">Quan sát</h3><p data-i18n="method.step1.body">Tỷ lệ trụ bận, sản lượng điện, thời lượng sạc, giá điện và thời gian trong ngày được ghi theo từng giờ.</p><div class="flow-visual signal-bars"><span style="height:40%"></span><span style="height:60%"></span><span style="height:48%"></span><span style="height:78%"></span><span style="height:68%"></span></div></article>
+          <article class="flow-card featured reveal delay-1"><span class="flow-number">02</span><h3 data-i18n="method.step2.title">Ghi nhớ</h3><p data-i18n="method.step2.body">LSTM đọc 24 điểm liên tiếp và giữ lại tín hiệu quan trọng thay vì xem từng giờ như một bản ghi độc lập.</p><div class="flow-visual memory-line"><span></span><span></span><span></span><span></span><b>24H</b></div></article>
+          <article class="flow-card reveal delay-2"><span class="flow-number">03</span><h3 data-i18n="method.step3.title">Cảnh báo</h3><p data-i18n="method.step3.body">Xác suất được so với ngưỡng nghiệp vụ 80%. Kết quả có thể dùng để ưu tiên khu vực cần theo dõi.</p><div class="flow-visual alert-chip"><span>0.87</span><small>HIGH RISK</small></div></article>
+        </div>
+      </section>
+
+      <section class="section-shell results-section" id="results">
+        <div class="section-heading reveal"><div><p class="eyebrow" data-i18n="results.eyebrow">KẾT QUẢ THỬ NGHIỆM</p><h2 data-i18n="results.title">Baseline để biết LSTM đang đứng ở đâu.</h2></div><p data-i18n="results.description">Các chỉ số được tính trên tập test theo mốc thời gian. Log Loss và Brier Score càng thấp càng tốt.</p></div>
+        <div class="results-layout"><div class="metrics-table-wrap panel reveal"><table><thead><tr><th data-i18n="results.model">Mô hình</th><th>PR-AUC</th><th>Recall</th><th>F1</th><th>Brier</th></tr></thead><tbody id="metricsBody"></tbody></table></div><div class="result-note reveal delay-1"><span class="note-mark">↗</span><h3 data-i18n="results.noteTitle">Đọc kết quả cho đúng</h3><p data-i18n="results.noteBody">Mô hình cây đang có kết quả tốt hơn trong lần chạy này. Đây là kết quả cần giữ nguyên, vì mục tiêu của baseline là cho biết dữ liệu dạng bảng mạnh đến đâu trước khi kết luận về lợi ích của LSTM.</p><a href="#dataset" class="text-link" data-i18n="results.noteLink">Xem dữ liệu và phạm vi</a></div></div>
+      </section>
+
+      <section class="section-shell dataset-section" id="dataset">
+        <div class="section-heading reveal"><div><p class="eyebrow" data-i18n="dataset.eyebrow">BỘ DỮ LIỆU</p><h2 data-i18n="dataset.title">Một thành phố, nhiều nhịp sạc.</h2></div><p data-i18n="dataset.description">Bản chạy thử dùng dữ liệu khu vực theo giờ. Dữ liệu gốc có cả phiên bản 5 phút và dữ liệu trạm thô.</p></div>
+        <div class="dataset-grid"><div class="dataset-stat reveal"><strong>275</strong><span data-i18n="dataset.stat1">khu vực sạc</span></div><div class="dataset-stat reveal delay-1"><strong>4,344</strong><span data-i18n="dataset.stat2">mốc thời gian theo giờ</span></div><div class="dataset-stat reveal delay-2"><strong>1.19M</strong><span data-i18n="dataset.stat3">quan sát khu vực giờ</span></div><div class="dataset-stat accent reveal delay-3"><strong>80%</strong><span data-i18n="dataset.stat4">ngưỡng cảnh báo</span></div></div>
+        <div class="feature-list"><div class="feature-item reveal"><span class="feature-index">A</span><div><h3>occupancy</h3><p data-i18n="dataset.field1">Số trụ đang bận tại khu vực. Được chia cho charge_count để tạo tỷ lệ lấp đầy.</p></div></div><div class="feature-item reveal delay-1"><span class="feature-index">B</span><div><h3>volume / duration</h3><p data-i18n="dataset.field2">Sản lượng điện và tổng thời lượng sạc trong giờ, phản ánh cường độ sử dụng.</p></div></div><div class="feature-item reveal delay-2"><span class="feature-index">C</span><div><h3>e_price / s_price</h3><p data-i18n="dataset.field3">Giá điện và phí dịch vụ, được đưa vào để kiểm tra khả năng tác động đến nhu cầu.</p></div></div></div>
+      </section>
+
+      <section class="section-shell references-section" id="references">
+        <div class="reference-panel reveal"><div><p class="eyebrow" data-i18n="references.eyebrow">GHI NHẬN NGUỒN</p><h2 data-i18n="references.title">Dữ liệu mở để học, không phải để nhận công.</h2><p data-i18n="references.body">Đây là sản phẩm học tập cá nhân. Dataset UrbanEV được sử dụng theo nguồn công khai và được ghi nhận đầy đủ. Project không đại diện cho nhóm tác giả dataset và không dùng cho mục đích thương mại.</p></div><div class="reference-links"><a href="https://doi.org/10.5061/dryad.np5hqc04z" target="_blank" rel="noreferrer">Dryad dataset <span>↗</span></a><a href="https://github.com/IntelligentSystemsLab/UrbanEV" target="_blank" rel="noreferrer">Official repository <span>↗</span></a><a href="https://doi.org/10.1038/s41597-025-04874-4" target="_blank" rel="noreferrer">Dataset paper <span>↗</span></a></div></div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div><strong>EV / WATCH</strong><span data-i18n="footer.text">Đồ án học tập về cảnh báo sớm khu vực sạc xe điện.</span></div><a href="https://github.com/thang-uit/ev-charging-area-early-warning" target="_blank" rel="noreferrer">thang-uit / ev-charging-area-early-warning ↗</a></footer>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
