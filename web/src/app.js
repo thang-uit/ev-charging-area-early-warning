@@ -10,6 +10,10 @@ function applyTranslations() {
     const value = translations[state.language][element.dataset.i18n];
     if (value) element.textContent = value;
   });
+  document.querySelectorAll('[data-i18n-aria]').forEach((element) => {
+    const value = translations[state.language][element.dataset.i18nAria];
+    if (value) element.setAttribute('aria-label', value);
+  });
 }
 
 function setTheme(theme) {
