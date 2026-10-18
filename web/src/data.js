@@ -1,7 +1,12 @@
 export async function loadDemoData() {
-  const response = await fetch('./data/demo.json');
-  if (!response.ok) throw new Error(`Demo data request failed: ${response.status}`);
-  return response.json();
+  const [demoResponse, zonesResponse] = await Promise.all([
+    fetch('./data/demo.json'),
+    fetch('./data/zones.json'),
+  ]);
+  if (!demoResponse.ok) throw new Error(`Demo data request failed: ${demoResponse.status}`);
+  if (!zonesResponse.ok) throw new Error(`Zone data request failed: ${zonesResponse.status}`);
+  const [demo, zones] = await Promise.all([demoResponse.json(), zonesResponse.json()]);
+  return { ...demo, zones };
 }
 
 export function formatPercent(value) {

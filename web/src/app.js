@@ -1,7 +1,8 @@
 import { loadDemoData, formatDate, formatPercent } from './data.js';
 import { translations } from './i18n.js';
+import { renderZoneMap } from './map.js';
 
-const state = { language: 'vi', theme: document.documentElement.dataset.theme || 'light', data: null, zone: null, row: 0 };
+const state = { language: 'vi', theme: document.documentElement.dataset.theme || 'light', data: null, zone: null, row: 0, customSelects: new Map() };
 const $ = (selector) => document.querySelector(selector);
 
 function applyTranslations() {
@@ -10,16 +11,25 @@ function applyTranslations() {
     const value = translations[state.language][element.dataset.i18n];
     if (value) element.textContent = value;
   });
+  document.querySelectorAll('[data-i18n-alt]').forEach((element) => {
+    const value = translations[state.language][element.dataset.i18nAlt];
+    if (value) element.setAttribute('alt', value);
+  });
   document.querySelectorAll('[data-i18n-aria]').forEach((element) => {
     const value = translations[state.language][element.dataset.i18nAria];
     if (value) element.setAttribute('aria-label', value);
   });
+  const themeLabel = $('.theme-toggle-label');
+  if (themeLabel) themeLabel.textContent = state.theme === 'dark'
+    ? (state.language === 'vi' ? 'SÁNG' : 'LIGHT')
+    : (state.language === 'vi' ? 'TỐI' : 'DARK');
 }
 
 function setTheme(theme) {
   state.theme = theme;
   document.documentElement.dataset.theme = theme;
   try { localStorage.setItem('ev-warning-theme', theme); } catch (_) {}
+  applyTranslations();
 }
 
 function updateMenuLabel(isOpen) {
@@ -55,21 +65,109 @@ function setMobileMenu(isOpen) {
 
 function getZoneRows(zone) { return state.data.predictions.filter((item) => item.zone_id === zone); }
 
+function closeCustomSelects(except = null) {
+  state.customSelects.forEach((control, key) => {
+    if (key === except) return;
+    control.root.classList.remove('is-open');
+    control.trigger.setAttribute('aria-expanded', 'false');
+    control.menu.classList.remove('is-open');
+    window.setTimeout(() => {
+      if (!control.root.classList.contains('is-open')) control.menu.hidden = true;
+    }, 220);
+  });
+}
+
+function renderCustomSelect(key, options, selectedValue, onChange) {
+  const control = state.customSelects.get(key);
+  if (!control) return;
+  control.options = options;
+  control.value = String(selectedValue);
+  control.onChange = onChange;
+  const selected = options.find((option) => String(option.value) === control.value) || options[0];
+  control.value = selected ? String(selected.value) : '';
+  control.valueElement.textContent = selected?.label || '--';
+  control.menu.innerHTML = '';
+  options.forEach((option) => {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'select-option';
+    item.setAttribute('role', 'option');
+    item.setAttribute('aria-selected', String(String(option.value) === control.value));
+    item.dataset.value = String(option.value);
+    item.textContent = option.label;
+    item.addEventListener('click', () => chooseCustomSelect(key, option.value));
+    control.menu.append(item);
+  });
+}
+
+function chooseCustomSelect(key, value) {
+  const control = state.customSelects.get(key);
+  if (!control) return;
+  control.value = String(value);
+  const selected = control.options.find((option) => String(option.value) === control.value);
+  control.valueElement.textContent = selected?.label || '--';
+  control.menu.querySelectorAll('.select-option').forEach((item) => item.setAttribute('aria-selected', String(item.dataset.value === control.value)));
+  closeCustomSelects();
+  control.onChange?.(control.value);
+}
+
+function setupCustomSelects() {
+  document.querySelectorAll('[data-select-control]').forEach((root) => {
+    const key = root.dataset.selectControl;
+    const trigger = root.querySelector('.select-trigger');
+    const menu = root.querySelector('.select-menu');
+    const valueElement = root.querySelector('.select-value');
+    const control = { root, trigger, menu, valueElement, options: [], value: '', onChange: null };
+    state.customSelects.set(key, control);
+    trigger.addEventListener('click', () => {
+      const isOpen = root.classList.contains('is-open');
+      closeCustomSelects(isOpen ? null : key);
+      root.classList.toggle('is-open', !isOpen);
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+      if (!isOpen) {
+        menu.hidden = false;
+        requestAnimationFrame(() => menu.classList.add('is-open'));
+        menu.querySelector('.select-option[aria-selected="true"]')?.focus();
+      }
+    });
+    trigger.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        trigger.click();
+      }
+    });
+    menu.addEventListener('keydown', (event) => {
+      const items = [...menu.querySelectorAll('.select-option')];
+      const current = items.indexOf(document.activeElement);
+      if (event.key === 'Escape') { closeCustomSelects(); trigger.focus(); }
+      if (event.key === 'ArrowDown') { event.preventDefault(); items[Math.min(current + 1, items.length - 1)]?.focus(); }
+      if (event.key === 'ArrowUp') { event.preventDefault(); items[Math.max(current - 1, 0)]?.focus(); }
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); document.activeElement?.click(); }
+    });
+  });
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('[data-select-control]')) closeCustomSelects();
+  });
+}
+
 function renderSelectors() {
   const zones = [...new Set(state.data.predictions.map((item) => item.zone_id))].sort((a, b) => Number(a) - Number(b));
-  const zoneSelect = $('#zoneSelect');
-  zoneSelect.innerHTML = zones.map((zone) => `<option value="${zone}">TAZ ${zone}</option>`).join('');
   state.zone = state.zone || zones[0];
-  zoneSelect.value = state.zone;
+  renderCustomSelect('zone', zones.map((zone) => ({ value: zone, label: `TAZ ${zone}` })), state.zone, (value) => {
+    state.zone = value;
+    state.row = 0;
+    renderTimes();
+  });
   renderTimes();
 }
 
 function renderTimes() {
   const rows = getZoneRows(state.zone);
-  const timeSelect = $('#timeSelect');
-  timeSelect.innerHTML = rows.map((item, index) => `<option value="${index}">${formatDate(item.observation_time, state.language)}</option>`).join('');
   state.row = Math.max(0, Math.min(state.row || 0, rows.length - 1));
-  timeSelect.value = String(state.row);
+  renderCustomSelect('time', rows.map((item, index) => ({ value: index, label: formatDate(item.observation_time, state.language) })), state.row, (value) => {
+    state.row = Number(value);
+    renderPrediction();
+  });
   renderPrediction();
 }
 
@@ -83,6 +181,7 @@ function renderPrediction() {
   $('#targetRate').textContent = formatPercent(row.target_rate_next_hour);
   $('#probability').textContent = probability.toFixed(2);
   $('#heroProbability').innerHTML = `${probability.toFixed(2)} <em>${isRisk ? (state.language === 'vi' ? 'CẦN THEO DÕI' : 'WATCH') : (state.language === 'vi' ? 'BÌNH THƯỜNG' : 'NORMAL')}</em>`;
+  $('#heroProbabilityCallout').textContent = probability.toFixed(2);
   $('#probabilityRingText').textContent = formatPercent(probability);
   $('#probabilityMeter').style.width = `${probability * 100}%`;
   $('#probabilityRing').style.setProperty('--progress', `${probability * 360}deg`);
@@ -92,6 +191,14 @@ function renderPrediction() {
     ? (state.language === 'vi' ? `Khu vực ${state.zone} có tín hiệu cần ưu tiên xem xét trong giờ kế tiếp.` : `Area ${state.zone} deserves priority review for the next hour.`)
     : (state.language === 'vi' ? 'Chưa thấy tín hiệu cần cảnh báo cho giờ kế tiếp.' : 'No alert signal is indicated for the next hour.');
   renderTrend(rows);
+  renderZoneMap($('#zoneMap'), state.data.zones, state.data.predictions, state.zone, row.observation_time);
+  const zoneInfo = state.data.zones.find((zone) => zone.id === state.zone);
+  $('#mapTitle').textContent = `TAZ ${state.zone}`;
+  $('#mapZoneDetail').textContent = state.language === 'vi'
+    ? `Khu vực ${state.zone} trong tập dự đoán. Điểm lớn hơn thể hiện sức chứa tương đối.`
+    : `Area ${state.zone} in the prediction set. Larger points indicate relative capacity.`;
+  $('#mapCapacity').textContent = zoneInfo ? `${zoneInfo.capacity} ${state.language === 'vi' ? 'trụ' : 'piles'}` : '--';
+  $('#mapProbability').textContent = formatPercent(probability);
 }
 
 function renderTrend(rows) {
@@ -135,12 +242,14 @@ function setupEvents() {
     updateMenuLabel($('#menuToggle').getAttribute('aria-expanded') === 'true');
     renderTimes();
   }));
-  $('#zoneSelect').addEventListener('change', (event) => { state.zone = event.target.value; state.row = 0; renderTimes(); });
-  $('#timeSelect').addEventListener('change', (event) => { state.row = Number(event.target.value); renderPrediction(); });
   const menu = $('#mobileNav');
   $('#menuToggle').addEventListener('click', () => setMobileMenu(menu.hidden));
   $('#mobileNavScrim').addEventListener('click', () => setMobileMenu(false));
   menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMobileMenu(false)));
+  $('#zoneMap').addEventListener('click', (event) => {
+    const point = event.target.closest('.map-point-selected, .map-point-active');
+    if (point?.dataset.zone) chooseCustomSelect('zone', point.dataset.zone);
+  });
   document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !menu.hidden) setMobileMenu(false); });
   $('#heroVisual').addEventListener('pointermove', (event) => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.innerWidth < 780) return;
@@ -155,7 +264,7 @@ function setupEvents() {
 async function init() {
   try {
     state.data = await loadDemoData();
-    applyTranslations(); renderSelectors(); renderMetrics(); setupEvents(); setupReveal(); setupNavigation();
+    applyTranslations(); setupCustomSelects(); renderSelectors(); renderMetrics(); setupEvents(); setupReveal(); setupNavigation();
   } catch (error) {
     document.body.insertAdjacentHTML('beforeend', '<div class="load-error">Demo data could not be loaded. Run the site through a local server.</div>');
     console.error(error);
