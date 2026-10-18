@@ -27,6 +27,24 @@ Các hình dưới đây được sinh trực tiếp từ notebook và được 
 
 ![Đường Precision Recall](artifacts/figures/05_precision_recall.png)
 
+![Ma trận nhầm lẫn](artifacts/figures/08_confusion_matrices.png)
+
+![Nhịp sử dụng theo giờ](artifacts/figures/09_hourly_occupancy_profile.png)
+
+![Sức chứa các khu vực](artifacts/figures/10_selected_zone_capacity.png)
+
+![Hiệu chỉnh xác suất](artifacts/figures/11_probability_calibration.png)
+
+Các hình phân tích sâu được sinh từ cùng tập dự đoán của notebook:
+
+![Độ nhạy theo ngưỡng](artifacts/figures/17_threshold_sensitivity.png)
+
+![Phân rã các loại lỗi](artifacts/figures/18_error_profile_models.png)
+
+![Nhịp sự kiện theo giờ và ngày](artifacts/figures/19_weekday_hour_event_heatmap.png)
+
+![Luồng tái lập](artifacts/figures/20_reproducible_pipeline.png)
+
 Ảnh giao diện demo được tạo khi chạy web cục bộ:
 
 ![EV Watch dashboard](artifacts/demo-dashboard.png)
@@ -34,6 +52,8 @@ Các hình dưới đây được sinh trực tiếp từ notebook và được 
 ![EV Watch dashboard dark mode](artifacts/demo-dashboard-dark.png)
 
 ![EV Watch dashboard mobile](artifacts/demo-mobile.png)
+
+Giao diện hiện dùng nền xanh ngọc nhạt ở chế độ sáng và nền xanh đêm ở chế độ tối. Cảnh mô phỏng có lưới phối cảnh, quỹ đạo, điểm dữ liệu và hiệu ứng quét để diễn tả cách một khu vực được quan sát theo thời gian. Những hiệu ứng này chỉ phục vụ việc đọc giao diện, không phải dữ liệu mới và không thay đổi kết quả mô hình.
 
 ### Bài toán
 
@@ -157,6 +177,11 @@ Web demo có:
 - biểu đồ diễn biến xác suất
 - bảng so sánh các mô hình
 - liên kết tới nguồn dataset chính thức
+- cảnh mô phỏng khu vực sạc dạng phối cảnh với chuyển động nhẹ
+- cảnh 3D mô phỏng khu vực, quỹ đạo, điểm dữ liệu và hiệu ứng quét tín hiệu
+- dải hướng dẫn đọc cảnh báo theo ba bước: xác suất, trạng thái hiện tại và quyết định của người vận hành
+- chuyển ngôn ngữ bằng nút VI/EN và theme sáng/tối
+- bố cục responsive cho desktop, tablet và mobile
 
 ### Triển khai GitHub Pages
 
