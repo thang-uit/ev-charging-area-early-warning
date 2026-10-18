@@ -22,6 +22,37 @@ function setTheme(theme) {
   try { localStorage.setItem('ev-warning-theme', theme); } catch (_) {}
 }
 
+function updateMenuLabel(isOpen) {
+  const labelKey = isOpen ? 'menu.close' : 'menu.aria';
+  const label = translations[state.language][labelKey];
+  if (label) $('#menuToggle').setAttribute('aria-label', label);
+}
+
+function setMobileMenu(isOpen) {
+  const menu = $('#mobileNav');
+  const scrim = $('#mobileNavScrim');
+  const menuButton = $('#menuToggle');
+  if (isOpen) {
+    menu.hidden = false;
+    scrim.hidden = false;
+    requestAnimationFrame(() => {
+      menu.classList.add('is-open');
+      scrim.classList.add('is-visible');
+    });
+  } else {
+    menu.classList.remove('is-open');
+    scrim.classList.remove('is-visible');
+    window.setTimeout(() => {
+      if (!menu.classList.contains('is-open')) {
+        menu.hidden = true;
+        scrim.hidden = true;
+      }
+    }, 560);
+  }
+  menuButton.setAttribute('aria-expanded', String(isOpen));
+  updateMenuLabel(isOpen);
+}
+
 function getZoneRows(zone) { return state.data.predictions.filter((item) => item.zone_id === zone); }
 
 function renderSelectors() {
@@ -100,13 +131,17 @@ function setupEvents() {
   document.querySelectorAll('[data-language]').forEach((button) => button.addEventListener('click', () => {
     state.language = button.dataset.language;
     document.querySelectorAll('[data-language]').forEach((item) => item.classList.toggle('is-active', item === button));
-    applyTranslations(); renderTimes();
+    applyTranslations();
+    updateMenuLabel($('#menuToggle').getAttribute('aria-expanded') === 'true');
+    renderTimes();
   }));
   $('#zoneSelect').addEventListener('change', (event) => { state.zone = event.target.value; state.row = 0; renderTimes(); });
   $('#timeSelect').addEventListener('change', (event) => { state.row = Number(event.target.value); renderPrediction(); });
   const menu = $('#mobileNav');
-  $('#menuToggle').addEventListener('click', () => { const isOpen = !menu.hidden; menu.hidden = isOpen; $('#menuToggle').setAttribute('aria-expanded', String(!isOpen)); });
-  menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => { menu.hidden = true; $('#menuToggle').setAttribute('aria-expanded', 'false'); }));
+  $('#menuToggle').addEventListener('click', () => setMobileMenu(menu.hidden));
+  $('#mobileNavScrim').addEventListener('click', () => setMobileMenu(false));
+  menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMobileMenu(false)));
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !menu.hidden) setMobileMenu(false); });
   $('#heroVisual').addEventListener('pointermove', (event) => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.innerWidth < 780) return;
     const bounds = event.currentTarget.getBoundingClientRect();

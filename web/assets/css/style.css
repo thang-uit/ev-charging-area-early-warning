@@ -72,7 +72,7 @@ html[data-theme="dark"] .theme-moon { display: inline; }
 .github-link { margin-left: .35rem; color: var(--calm); font-family: var(--font-mono); font-size: .68rem; font-weight: 800; }
 .github-link span { color: var(--accent); }
 .menu-button { display: none; }
-.mobile-nav[hidden] { display: none; }
+.mobile-nav[hidden], .mobile-nav-scrim[hidden] { display: none; }
 
 .section-shell { width: min(1320px, calc(100% - 2rem)); margin: 0 auto; }
 .hero { display: grid; grid-template-columns: minmax(0, .84fr) minmax(500px, 1.16fr); align-items: center; gap: clamp(3rem, 6vw, 6.5rem); min-height: calc(100svh - 74px); padding: 4.7rem 0 3.8rem; }
@@ -303,9 +303,12 @@ html[data-theme="dark"] .theme-moon { display: inline; }
   .main-nav, .header-actions .github-link { display: none; }
   .header-actions { margin-left: auto; }
   .menu-button { display: grid; }
-  .mobile-nav { position: fixed; top: 78px; right: 1rem; left: 1rem; z-index: 19; display: grid; gap: .2rem; padding: .7rem; background: var(--surface-strong); border: 1px solid var(--line); border-radius: 9px; box-shadow: var(--shadow); }
-  .mobile-nav a { padding: .65rem .7rem; color: var(--muted); border-bottom: 1px solid var(--line); font-size: .82rem; }
-  .mobile-nav a:last-child { border-bottom: 0; }
+  .mobile-nav-scrim { position: fixed; inset: 74px 0 0; z-index: 24; background: rgba(7, 24, 32, .34); opacity: 0; transition: opacity .45s var(--ease); backdrop-filter: blur(3px); }
+  .mobile-nav-scrim.is-visible { opacity: 1; }
+  .mobile-nav { position: fixed; top: 74px; bottom: 0; left: 0; z-index: 25; display: flex; width: min(22rem, calc(100% - 2.25rem)); flex-direction: column; gap: 0; padding: 1.35rem 1.25rem 2rem; background: color-mix(in srgb, var(--surface-strong) 94%, transparent); border-right: 1px solid var(--line); box-shadow: 28px 0 70px rgba(8, 39, 44, .18); transform: translateX(-104%); visibility: hidden; transition: transform .55s var(--ease), visibility 0s linear .55s; }
+  .mobile-nav.is-open { transform: translateX(0); visibility: visible; transition-delay: 0s; }
+  .mobile-nav a { padding: 1.05rem .65rem; color: var(--muted); border-bottom: 1px solid var(--line); font-size: .98rem; font-weight: 700; transition: color .35s var(--ease), padding-left .35s var(--ease); }
+  .mobile-nav a:hover, .mobile-nav a:focus-visible { padding-left: 1rem; color: var(--ink); }
   .hero { display: block; min-height: auto; padding: 4rem 0 4.5rem; }
   .hero-copy { max-width: 680px; padding-left: 0; }
   .hero-copy::before { display: none; }

@@ -61,7 +61,9 @@ The LSTM is the main deep learning model. Logistic Regression and Histogram Grad
 
 Open the deployed demo:
 
-**[https://thang-uit.github.io/ev-charging-area-early-warning/](https://thang-uit.github.io/ev-charging-area-early-warning/)**
+**Live website:** [Open EV Watch on GitHub Pages](https://thang-uit.github.io/ev-charging-area-early-warning/)
+
+The images below are screenshots captured from the current web build. They are also linked to the live website, so clicking an image opens the demo instead of the old PNG snapshot.
 
 The interface supports:
 
@@ -73,11 +75,11 @@ The interface supports:
 - A visual charging-area simulation for explaining the warning signal
 - Links to the original dataset and source repository
 
-![EV Watch dashboard in light mode](artifacts/demo-dashboard.png)
+[![EV Watch dashboard in light mode](artifacts/demo-dashboard.png)](https://thang-uit.github.io/ev-charging-area-early-warning/)
 
-![EV Watch dashboard in dark mode](artifacts/demo-dashboard-dark.png)
+[![EV Watch dashboard in dark mode](artifacts/demo-dashboard-dark.png)](https://thang-uit.github.io/ev-charging-area-early-warning/)
 
-![EV Watch dashboard on a mobile viewport](artifacts/demo-mobile.png)
+[![EV Watch dashboard on a mobile viewport](artifacts/demo-mobile.png)](https://thang-uit.github.io/ev-charging-area-early-warning/)
 
 ## Task Definition
 
