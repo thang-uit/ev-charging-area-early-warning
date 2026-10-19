@@ -80,6 +80,10 @@ The interface supports:
 - Links to the original dataset and source repository
 - Lucian UX/UI Prompt components adapted for the theme switch and custom listbox
 
+The light-theme dashboard keeps the probability ring track visible against the paper surface, so the orange probability segment and the remaining part of the ring can be read at a glance:
+
+![EV Watch light-theme dashboard preview](artifacts/demo-dashboard-light.png)
+
 [![EV Watch prediction trajectory](web/assets/figures/probability-trajectory.png)](https://thang-uit.github.io/ev-charging-area-early-warning/)
 
 ![EV Watch spatial map preview](artifacts/demo-map-overview.png)
