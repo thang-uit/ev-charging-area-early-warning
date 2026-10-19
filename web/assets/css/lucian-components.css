@@ -39,7 +39,9 @@
   transition: transform .8s var(--ease), opacity .6s var(--ease);
 }
 .theme-toggle-thumb {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 3px;
   z-index: 3;
   display: block;
   width: 18px;
@@ -48,7 +50,8 @@
   border: 1px solid rgba(200, 110, 0, .35);
   border-radius: 50%;
   box-shadow: 0 2px 5px rgba(140, 80, 0, .35), inset 2px 2px 4px rgba(255, 255, 255, .45);
-  transform: translateX(20px);
+  transform: translate(20px, -50%);
+  will-change: transform;
   transition: transform .9s var(--ease), background .8s var(--ease), box-shadow .8s var(--ease);
 }
 html[data-theme="dark"] .theme-toggle-track::before { opacity: 1; }
@@ -60,7 +63,7 @@ html[data-theme="dark"] .theme-toggle-thumb {
   background: radial-gradient(circle at 35% 30%, #f4f6fb, #c9cfdd 60%, #a9b0c2);
   border-color: rgba(100, 110, 140, .55);
   box-shadow: 0 2px 5px rgba(0, 0, 0, .35), inset -2px -3px 4px rgba(80, 90, 120, .25);
-  transform: translateX(0) rotate(200deg);
+  transform: translate(0, -50%) rotate(200deg);
 }
 
 /* Lucian UX/UI Prompt #031 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#031 */
@@ -85,7 +88,9 @@ html[data-theme="dark"] .theme-toggle-thumb {
 .select-menu {
   top: calc(100% + 8px);
   max-height: 198px;
-  padding: 6px;
+  display: grid;
+  gap: 4px;
+  padding: 8px;
   border-radius: 18px;
   opacity: 0;
   transform: translateY(-6px) scaleY(.92);
@@ -101,10 +106,11 @@ html[data-theme="dark"] .theme-toggle-thumb {
 }
 .select-option {
   position: relative;
-  min-height: 46px;
-  padding: 0 34px 0 10px;
+  min-height: 44px;
+  padding: 0 34px 0 12px;
   border-radius: 12px;
-  transition: color .2s var(--ease), background-color .2s var(--ease), transform .35s var(--ease);
+  line-height: 1.3;
+  transition: color .2s var(--ease), background-color .2s var(--ease), box-shadow .2s var(--ease);
 }
 .select-option:hover,
 .select-option:focus-visible,
@@ -120,7 +126,36 @@ html[data-theme="dark"] .theme-toggle-thumb {
   content: "";
   transform: translateY(-65%) rotate(45deg);
 }
-.select-option:hover { transform: translateX(3px); }
+.select-option:hover { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--data) 18%, transparent); }
+
+/* The active language is one sliding surface, so the switch reads as one control. */
+.language-switch {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.language-switch::before {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  z-index: 0;
+  width: 36px;
+  border-radius: calc(var(--radius-control) - 2px);
+  background: var(--data-soft);
+  content: "";
+  transform: translateX(0);
+  transition: transform .42s cubic-bezier(.22, 1, .36, 1), background-color .3s var(--ease);
+}
+.language-switch[data-active="en"]::before { transform: translateX(36px); }
+.language-button {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  transition: color .28s var(--ease);
+}
+.language-button.is-active { background: transparent; }
+.language-button:not(.is-active):hover { color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle-track,
@@ -128,7 +163,9 @@ html[data-theme="dark"] .theme-toggle-thumb {
   .theme-toggle-track::after,
   .theme-toggle-thumb,
   .select-menu,
-  .select-option { transition-duration: .001ms; }
+  .select-option,
+  .language-switch::before,
+  .language-button { transition-duration: .001ms; }
 }
 
 /* Lucian UX/UI Prompt #039 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#039 */

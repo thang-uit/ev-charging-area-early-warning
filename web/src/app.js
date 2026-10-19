@@ -1,6 +1,6 @@
 import { loadDemoData, formatDate, formatPercent } from './data.js';
-import { translations } from './i18n.js?v=20261019-3';
-import { renderZoneMap } from './map.js';
+import { translations } from './i18n.js?v=20261019-4';
+import { renderZoneMap } from './map.js?v=20261019-2';
 
 const state = { language: 'vi', theme: document.documentElement.dataset.theme || 'light', data: null, zone: null, row: 0, metricPulseKey: 'probability', customSelects: new Map() };
 const $ = (selector) => document.querySelector(selector);
@@ -19,6 +19,8 @@ function applyTranslations() {
     const value = translations[state.language][element.dataset.i18nAria];
     if (value) element.setAttribute('aria-label', value);
   });
+  const languageSwitch = $('.language-switch');
+  if (languageSwitch) languageSwitch.dataset.active = state.language;
   const themeLabel = $('.theme-toggle-label');
   if (themeLabel) themeLabel.textContent = state.theme === 'dark'
     ? (state.language === 'vi' ? 'SÁNG' : 'LIGHT')
@@ -45,6 +47,7 @@ function setMobileMenu(isOpen) {
   if (isOpen) {
     menu.hidden = false;
     scrim.hidden = false;
+    document.body.classList.add('mobile-menu-open');
     requestAnimationFrame(() => {
       menu.classList.add('is-open');
       scrim.classList.add('is-visible');
@@ -52,6 +55,7 @@ function setMobileMenu(isOpen) {
   } else {
     menu.classList.remove('is-open');
     scrim.classList.remove('is-visible');
+    document.body.classList.remove('mobile-menu-open');
     window.setTimeout(() => {
       if (!menu.classList.contains('is-open')) {
         menu.hidden = true;
@@ -60,6 +64,7 @@ function setMobileMenu(isOpen) {
     }, 560);
   }
   menuButton.setAttribute('aria-expanded', String(isOpen));
+  if (!isOpen) menuButton.focus({ preventScroll: true });
   updateMenuLabel(isOpen);
 }
 
@@ -409,14 +414,28 @@ function setupEvents() {
   document.querySelectorAll('[data-language]').forEach((button) => button.addEventListener('click', () => {
     state.language = button.dataset.language;
     document.querySelectorAll('[data-language]').forEach((item) => item.classList.toggle('is-active', item === button));
+    const languageSwitch = $('.language-switch');
+    if (languageSwitch) languageSwitch.dataset.active = state.language;
     applyTranslations();
     updateMenuLabel($('#menuToggle').getAttribute('aria-expanded') === 'true');
     renderTimes();
   }));
   const menu = $('#mobileNav');
-  $('#menuToggle').addEventListener('click', () => setMobileMenu(menu.hidden));
+  const menuButton = $('#menuToggle');
+  menuButton.addEventListener('pointerdown', (event) => event.preventDefault());
+  menuButton.addEventListener('click', () => {
+    const shouldOpen = !menu.classList.contains('is-open');
+    setMobileMenu(shouldOpen);
+    if (shouldOpen) window.setTimeout(() => {
+      if (menu.classList.contains('is-open')) $('#mobileNavClose')?.focus({ preventScroll: true });
+    }, 120);
+  });
+  $('#mobileNavClose').addEventListener('click', () => setMobileMenu(false));
   $('#mobileNavScrim').addEventListener('click', () => setMobileMenu(false));
-  menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMobileMenu(false)));
+  menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+    setMobileMenu(false);
+    window.setTimeout(() => $('#menuToggle').focus({ preventScroll: true }), 0);
+  }));
   $('#zoneMap').addEventListener('click', (event) => {
     const point = event.target.closest('.map-point-selected, .map-point-active');
     if (point?.dataset.zone) chooseCustomSelect('zone', point.dataset.zone);

@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./assets/css/style.css?v=20261019-7" />
-    <link rel="stylesheet" href="./assets/css/lucian-components.css?v=20261019-4" />
+    <link rel="stylesheet" href="./assets/css/style.css?v=20261019-11" />
+    <link rel="stylesheet" href="./assets/css/lucian-components.css?v=20261019-5" />
     <script>
       try {
         const savedTheme = localStorage.getItem('ev-warning-theme');
@@ -24,11 +24,11 @@
     <header class="site-header">
       <a class="brand" href="#top" aria-label="EV Watch"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="brand-copy"><strong>EV / WATCH</strong><small data-i18n="brand.subtitle">phòng thí nghiệm cảnh báo sớm</small></span></a>
       <nav class="main-nav" aria-label="Điều hướng chính" data-i18n-aria="nav.aria"><a href="#dashboard" data-nav="dashboard" data-i18n="nav.dashboard">Bảng điều khiển</a><a href="#method" data-nav="method" data-i18n="nav.method">Phương pháp</a><a href="#dataset" data-nav="dataset" data-i18n="nav.dataset">Dữ liệu</a><a href="#references" data-nav="references" data-i18n="nav.references">Nguồn</a></nav>
-      <div class="header-actions"><div class="language-switch" role="group" aria-label="Ngôn ngữ" data-i18n-aria="language.aria"><button type="button" class="language-button is-active" data-language="vi">VI</button><button type="button" class="language-button" data-language="en">EN</button></div><button class="theme-toggle" id="themeToggle" type="button" aria-label="Đổi giao diện sáng tối" data-i18n-aria="theme.aria" title="Đổi giao diện"><span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span><span class="theme-toggle-label" data-i18n="theme.label">TỐI</span></button><a class="github-link" href="https://github.com/thang-uit/ev-charging-area-early-warning" target="_blank" rel="noreferrer">GitHub <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M6 4h6v6"/></svg></a></div>
+      <div class="header-actions"><div class="language-switch" role="group" aria-label="Ngôn ngữ" data-i18n-aria="language.aria" data-active="vi"><button type="button" class="language-button is-active" data-language="vi">VI</button><button type="button" class="language-button" data-language="en">EN</button></div><button class="theme-toggle" id="themeToggle" type="button" aria-label="Đổi giao diện sáng tối" data-i18n-aria="theme.aria" title="Đổi giao diện"><span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span><span class="theme-toggle-label" data-i18n="theme.label">TỐI</span></button><a class="github-link" href="https://github.com/thang-uit/ev-charging-area-early-warning" target="_blank" rel="noreferrer">GitHub <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M6 4h6v6"/></svg></a></div>
       <button class="menu-button" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Mở menu" data-i18n-aria="menu.aria"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
     </header>
     <div class="mobile-nav-scrim" id="mobileNavScrim" hidden></div>
-    <nav class="mobile-nav" id="mobileNav" hidden aria-label="Điều hướng di động" data-i18n-aria="mobileNav.aria"><a href="#dashboard" data-i18n="nav.dashboard">Bảng điều khiển</a><a href="#method" data-i18n="nav.method">Phương pháp</a><a href="#dataset" data-i18n="nav.dataset">Dữ liệu</a><a href="#references" data-i18n="nav.references">Nguồn</a></nav>
+    <nav class="mobile-nav" id="mobileNav" hidden aria-label="Điều hướng di động" data-i18n-aria="mobileNav.aria"><div class="mobile-nav-header"><span class="mobile-nav-kicker" data-i18n="menu.label">ĐIỀU HƯỚNG</span><button class="mobile-nav-close" id="mobileNavClose" type="button" aria-label="Đóng menu" data-i18n-aria="menu.close" title="Đóng menu"><span></span><span></span></button></div><a href="#dashboard" data-i18n="nav.dashboard">Bảng điều khiển</a><a href="#method" data-i18n="nav.method">Phương pháp</a><a href="#dataset" data-i18n="nav.dataset">Dữ liệu</a><a href="#references" data-i18n="nav.references">Nguồn</a></nav>
 
     <main id="main">
       <section class="hero section-shell" id="top">
@@ -53,6 +53,6 @@
       <section class="section-shell references-section" id="references"><div class="reference-panel reveal"><div><p class="eyebrow" data-i18n="references.eyebrow">GHI NHẬN NGUỒN</p><h2 data-i18n="references.title">Dữ liệu mở để học, không phải để nhận công.</h2><p data-i18n="references.body">Đây là sản phẩm học tập cá nhân. Dataset UrbanEV được dùng từ nguồn công khai và được ghi nhận đầy đủ. Project không đại diện cho nhóm tác giả dataset và không dùng cho mục đích thương mại.</p></div><div class="reference-links"><a href="https://doi.org/10.5061/dryad.np5hqc04z" target="_blank" rel="noreferrer">Dryad dataset <span>↗</span></a><a href="https://github.com/IntelligentSystemsLab/UrbanEV" target="_blank" rel="noreferrer">Official repository <span>↗</span></a><a href="https://doi.org/10.1038/s41597-025-04874-4" target="_blank" rel="noreferrer">Dataset paper <span>↗</span></a></div></div></section>
     </main>
     <footer class="site-footer"><div><strong>EV / WATCH</strong><span data-i18n="footer.text">Đồ án học tập về cảnh báo sớm khu vực sạc xe điện.</span></div><a href="https://github.com/thang-uit/ev-charging-area-early-warning" target="_blank" rel="noreferrer">thang-uit / ev-charging-area-early-warning ↗</a></footer>
-    <script type="module" src="./src/app.js?v=20261019-7"></script>
+    <script type="module" src="./src/app.js?v=20261019-14"></script>
   </body>
 </html>

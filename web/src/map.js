@@ -1,6 +1,6 @@
 const MAP_WIDTH = 760;
 const MAP_HEIGHT = 420;
-const MAP_PADDING = 28;
+const MAP_PADDING = 34;
 
 function projectZones(zones) {
   const longitudes = zones.map((zone) => zone.longitude);
@@ -36,7 +36,22 @@ export function renderZoneMap(element, zones, predictions, selectedZone, selecte
   const selectedIds = new Set(predictions.map((row) => row.zone_id));
   const selectedPoint = projected.find((zone) => zone.id === selectedZone);
 
-  const gridLines = [0.25, 0.5, 0.75].map((ratio) => `<line class="map-grid-line" x1="${MAP_PADDING}" y1="${MAP_PADDING + ratio * (MAP_HEIGHT - MAP_PADDING * 2)}" x2="${MAP_WIDTH - MAP_PADDING}" y2="${MAP_PADDING + ratio * (MAP_HEIGHT - MAP_PADDING * 2)}"/>`).join('');
+  const gridLines = [0.2, 0.4, 0.6, 0.8].map((ratio) => {
+    const x = MAP_PADDING + ratio * (MAP_WIDTH - MAP_PADDING * 2);
+    const y = MAP_PADDING + ratio * (MAP_HEIGHT - MAP_PADDING * 2);
+    return `<line class="map-grid-line" x1="${MAP_PADDING}" y1="${y}" x2="${MAP_WIDTH - MAP_PADDING}" y2="${y}"/><line class="map-grid-line" x1="${x}" y1="${MAP_PADDING}" x2="${x}" y2="${MAP_HEIGHT - MAP_PADDING}"/>`;
+  }).join('');
+  const contours = [
+    '<path class="map-contour map-contour-major" d="M-30 322 C90 250 154 306 250 258 S404 280 502 218 S662 192 790 112"/>',
+    '<path class="map-contour" d="M-30 350 C86 278 164 333 252 286 S410 306 510 246 S666 218 790 140"/>',
+    '<path class="map-contour" d="M-30 378 C92 308 166 359 270 316 S422 334 530 274 S680 250 790 176"/>',
+    '<path class="map-contour map-contour-north" d="M30 80 C172 36 240 92 358 58 S584 60 735 28"/>',
+  ].join('');
+  const routes = [
+    '<path class="map-route map-route-primary" d="M-18 154 C94 112 160 132 246 170 S410 242 512 202 S660 130 778 166"/>',
+    '<path class="map-route" d="M112 -20 C142 74 178 112 236 174 S334 280 374 440"/>',
+    '<path class="map-route" d="M560 -20 C522 74 518 134 548 202 S642 316 704 440"/>',
+  ].join('');
   const points = projected.map((zone) => {
     const prediction = predictionByZone.get(zone.id);
     const isSelected = zone.id === selectedZone;
@@ -49,5 +64,5 @@ export function renderZoneMap(element, zones, predictions, selectedZone, selecte
   }).join('');
   const selectedRing = selectedPoint ? `<circle class="map-selection-ring" cx="${selectedPoint.x.toFixed(2)}" cy="${selectedPoint.y.toFixed(2)}" r="18"/>` : '';
 
-  element.innerHTML = `<svg viewBox="0 0 ${MAP_WIDTH} ${MAP_HEIGHT}" role="img" aria-label="Charging area locations around Shenzhen"><defs><filter id="mapGlow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="mapWash" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--map-wash-a)"/><stop offset="1" stop-color="var(--map-wash-b)"/></linearGradient></defs><rect class="map-surface" x="0" y="0" width="${MAP_WIDTH}" height="${MAP_HEIGHT}" rx="16"/><path class="map-terrain" d="M45 324 C135 278 160 308 230 260 S340 272 396 228 S520 248 585 190 S684 170 722 108 L760 0 L0 0 L0 390 Z"/><path class="map-river" d="M0 110 C90 150 125 112 216 150 S360 210 450 174 S602 114 760 148"/><path class="map-river-secondary" d="M0 182 C102 204 160 190 256 222 S408 270 520 230 S648 206 760 244"/>${gridLines}<g class="map-points">${points}</g>${selectedRing}<text class="map-label map-label-east" x="${MAP_WIDTH - 92}" y="${MAP_HEIGHT - 18}">EAST</text><text class="map-label map-label-north" x="${MAP_PADDING}" y="${MAP_PADDING - 8}">NORTH</text></svg>`;
+  element.innerHTML = `<svg viewBox="0 0 ${MAP_WIDTH} ${MAP_HEIGHT}" role="img" aria-label="Charging area locations around Shenzhen"><defs><clipPath id="mapClip"><rect x="0" y="0" width="${MAP_WIDTH}" height="${MAP_HEIGHT}" rx="18"/></clipPath><filter id="mapGlow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="mapWash" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--map-wash-a)"/><stop offset="1" stop-color="var(--map-wash-b)"/></linearGradient></defs><rect class="map-surface" x="0" y="0" width="${MAP_WIDTH}" height="${MAP_HEIGHT}" rx="18"/><g clip-path="url(#mapClip)"><rect class="map-wash" x="0" y="0" width="${MAP_WIDTH}" height="${MAP_HEIGHT}"/><path class="map-terrain" d="M-40 300 C92 242 160 282 254 244 S414 252 514 194 S666 174 800 76 L800 440 L-40 440 Z"/>${gridLines}${contours}${routes}<g class="map-points">${points}</g>${selectedRing}</g><g class="map-frame"><rect x="${MAP_PADDING}" y="${MAP_PADDING}" width="${MAP_WIDTH - MAP_PADDING * 2}" height="${MAP_HEIGHT - MAP_PADDING * 2}" rx="10"/></g><text class="map-label map-label-east" x="${MAP_WIDTH - MAP_PADDING - 4}" y="${MAP_HEIGHT - 12}">EAST</text><text class="map-label map-label-north" x="${MAP_PADDING}" y="${MAP_PADDING - 10}">NORTH</text><text class="map-coordinate map-coordinate-top" x="${MAP_WIDTH - MAP_PADDING}" y="18">深圳 / AREA ATLAS</text><text class="map-coordinate map-coordinate-bottom" x="${MAP_PADDING}" y="${MAP_HEIGHT - 10}">COORDINATE VIEW · ${projected.length} MAPPABLE AREAS</text></svg>`;
 }

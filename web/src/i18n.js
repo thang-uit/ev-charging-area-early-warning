@@ -24,3 +24,6 @@ export const translations = {
     'references.eyebrow': 'SOURCE CREDIT', 'references.title': 'Open data for learning, not for taking credit.', 'references.body': 'This is an individual learning project. UrbanEV is used from its public source and credited fully. The project is not affiliated with the dataset creators and is not for commercial use.', 'footer.text': 'Learning project for early EV charging area warnings.'
   }
 };
+
+translations.vi['menu.label'] = 'ĐIỀU HƯỚNG';
+translations.en['menu.label'] = 'NAVIGATION';
