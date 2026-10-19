@@ -1,5 +1,5 @@
 import { loadDemoData, formatDate, formatPercent } from './data.js';
-import { translations } from './i18n.js?v=20261019-4';
+import { translations } from './i18n.js?v=20261019-5';
 import { renderZoneMap } from './map.js?v=20261019-3';
 
 const state = { language: 'vi', theme: document.documentElement.dataset.theme || 'light', data: null, zone: null, row: 0, metricPulseKey: 'probability', customSelects: new Map() };
