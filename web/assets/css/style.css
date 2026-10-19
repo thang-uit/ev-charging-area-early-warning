@@ -24,7 +24,6 @@
   --map-wash-b: #c7d6ed;
   --map-terrain: #d5e0f1;
   --map-contour: #9db5d9;
-  --map-route: #6f94cf;
   --map-grid: #8da5ce;
   --map-frame: #afc1db;
   --map-context: #68819a;
@@ -65,7 +64,6 @@ html[data-theme="dark"] {
   --map-wash-b: #102239;
   --map-terrain: #142a47;
   --map-contour: #35618e;
-  --map-route: #74a2e7;
   --map-grid: #3e5d86;
   --map-frame: #355274;
   --map-context: #647a95;
@@ -244,16 +242,14 @@ html[data-theme="dark"] .theme-toggle-label { color: var(--accent-strong); }
 .map-contour { fill: none; stroke: var(--map-contour); stroke-linecap: round; stroke-width: 1.5; opacity: .52; }
 .map-contour-major { stroke-width: 3; opacity: .72; }
 .map-contour-north { opacity: .32; }
-.map-route { fill: none; stroke: var(--map-route); stroke-dasharray: 3 9; stroke-linecap: round; stroke-width: 1.5; opacity: .5; }
-.map-route-primary { stroke-width: 7; opacity: .18; }
-.map-grid-line { stroke: var(--map-grid); stroke-dasharray: 2 9; stroke-width: 1; opacity: .42; }
+.map-grid-line { stroke: var(--map-grid); stroke-width: 1; opacity: .22; }
 .map-frame { fill: none; stroke: var(--map-frame); stroke-width: 1; opacity: .7; pointer-events: none; }
 .map-point { cursor: pointer; transition: r .25s var(--ease), opacity .25s var(--ease), fill .25s var(--ease); }
 .map-point-context { fill: var(--map-context); opacity: .35; }
 .map-point-selected { fill: var(--data); opacity: .84; filter: url(#mapGlow); }
 .map-point-active { fill: var(--accent); stroke: var(--map-active-stroke); stroke-width: 2; filter: url(#mapGlow); }
 .map-point:hover { opacity: 1; }
-.map-selection-ring { fill: none; stroke: var(--accent); stroke-dasharray: 4 4; stroke-width: 1.5; animation: map-pulse 2.8s var(--ease) infinite; }
+.map-selection-ring { fill: none; stroke: var(--accent); stroke-width: 2; animation: map-pulse 2.8s var(--ease) infinite; }
 .map-label { fill: var(--map-label); font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; opacity: .7; }
 .map-label-east { text-anchor: end; }
 .map-coordinate { fill: var(--map-label); font-family: var(--font-mono); font-size: 9px; letter-spacing: .08em; opacity: .62; }
